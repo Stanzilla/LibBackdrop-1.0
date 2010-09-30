@@ -1,5 +1,5 @@
 ## Interface: 40000
-## Title: Lib: LibBackdrop-1.0
+## Title: Lib: Backdrop-1.0
 ## Notes: Replacement Library for SetBackDrop.
 ## Author: kagaro, lilsparky
 ## X-Website: http://www.wowace.com
