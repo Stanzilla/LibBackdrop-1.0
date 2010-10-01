@@ -51,6 +51,7 @@ function Backdrop:Embed(frame)
 	frame.SetBackdropBorderGradientAlpha = Backdrop.SetBackdropBorderGradientAlpha -- New API
 	frame.GetBackdropBorderSection = Backdrop.GetBackdropBorderSection -- New API
 	frame.GetBackdropBackground = Backdrop.GetBackdropBackground -- New API
+	frame.BorderTextureFunction = Backdrop.BorderTextureFunction
 end
 
 --- API
@@ -59,6 +60,18 @@ end
 -- @return true if embedded already
 function Backdrop:IsEmbedded(frame)
 	return frame._backdrop ~= nil
+end
+
+--- API
+-- Convience method to mass execute a given function and params across
+-- all border segments
+function Backdrop:BorderTextureFunction(func,...)
+	-- check to see the function exists for a texture object
+	if not self._backdrop.bgTexture[func] then return end
+	for k,v in pairs(edgePoints) do
+		local texture = self._backdrop["Edge"..k]
+		texture[func](texture,...)
+	end
 end
 
 --- API
