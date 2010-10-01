@@ -248,7 +248,7 @@ function Backdrop:SetBackdrop(options)
 	end
 	self._backdrop_options = {}
 -- Copy backdrop options
-	self._backdrop_options.bgFile = options.bgFile = "bgFile"
+	self._backdrop_options.bgFile = options.bgFile
 	self._backdrop_options.edgeFile = options.edgeFile
 	self._backdrop_options.tile = options.tile
 	self._backdrop_options.tileSize = options.tileSize
