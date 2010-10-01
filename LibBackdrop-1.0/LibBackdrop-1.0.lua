@@ -46,7 +46,33 @@ function Backdrop:Embed(frame)
 	frame.SetBackdropGradientAlpha = Backdrop.SetBackdropGradientAlpha -- New API
 	frame.SetBackdropBorderGradient = Backdrop.SetBackdropBorderGradient -- New API
 	frame.SetBackdropBorderGradientAlpha = Backdrop.SetBackdropBorderGradientAlpha -- New API
+	frame.GetBackdropBorderSection = Backdrop.GetBackdropBorderSection
+	frame.GetBackdropBackground = Backdrop.GetBackdropBackground
 end
+
+--- API
+-- this method will let you test to see if a frame has been embedded with enchanced backdrop
+-- @param frame to check
+-- @return true if embedded already
+function Backdrop:IsEmbedded(frame)
+	return frame._backdrop ~= nil
+end
+
+--- API
+-- This method allows you to get a reference to the backdrop itself
+-- @return a reference to the backdrop background texture
+function Backdrop:GetBackdropBackground()
+	return self._backdrop["bgTexture"]
+end
+--- API
+-- this method allows you to get a reference to given border section
+-- @param section [Valid values are: TOPLEFTCORNER,TOP,TOPRIGHTCORNER,LEFT,RIGHT,BOTLEFTCORNER,BOT,BOTRIGHTCORNER]
+-- @return the section texture or nil
+function Backdrop:GetBackdropBorderSection(section)
+	section = strupper(section)
+	return self._backdrop["Edge"..section]
+end
+
 
 --[[
 	FUTURE, once blizz removes SetBackdrop, we should hook CreateFrame and automatically embed ourselves
