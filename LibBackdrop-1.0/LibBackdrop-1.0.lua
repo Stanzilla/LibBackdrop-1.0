@@ -40,14 +40,17 @@ function Backdrop:Embed(frame)
 	end
 	frame._backdrop["bgTexture"] = frame:CreateTexture(nil,"BACKGROUND",nil,-1)	
 	frame.SetBackdrop = Backdrop.SetBackdrop -- Set the backdrop of the frame according to the specification provided. 
+	frame.GetBackdrop = Backdrop.GetBackdrop -- Get the backdrop of the frame for use in SetBackdrop
     frame.SetBackdropBorderColor = Backdrop.SetBackdropBorderColor --(r, g, b[, a]) - Set the frame's backdrop's border's color. 
+    frame.GetBackdropBorderColor = Backdrop.GetBackdropBorderColor -- Get the frame's backdrop's border's color.
     frame.SetBackdropColor = Backdrop.SetBackdropColor --(r, g, b[, a]) - Set the frame's backdrop color.
+	frame.GetBackdropColor = Backdrop.GetBackdropColor -- Get the backdrop color
 	frame.SetBackdropGradient = Backdrop.SetBackdropGradient -- New API
 	frame.SetBackdropGradientAlpha = Backdrop.SetBackdropGradientAlpha -- New API
 	frame.SetBackdropBorderGradient = Backdrop.SetBackdropBorderGradient -- New API
 	frame.SetBackdropBorderGradientAlpha = Backdrop.SetBackdropBorderGradientAlpha -- New API
-	frame.GetBackdropBorderSection = Backdrop.GetBackdropBorderSection
-	frame.GetBackdropBackground = Backdrop.GetBackdropBackground
+	frame.GetBackdropBorderSection = Backdrop.GetBackdropBorderSection -- New API
+	frame.GetBackdropBackground = Backdrop.GetBackdropBackground -- New API
 end
 
 --- API
@@ -168,6 +171,7 @@ local nk = {
 	["BOTLEFTCORNER"] = { l = 0, r = 0.5, t= 0.5, b=1},
 	["BOTRIGHTCORNER"] = { l = 0.5, r = 1, t= 0.5, b=1},
 }
+-- Attach new style corners
 local function AttachNewCorners(frame)
 	for k,v in pairs(corners) do
 		local texture = frame["Edge"..k]
@@ -177,6 +181,7 @@ local function AttachNewCorners(frame)
 		texture:SetTexCoord(nk[k].l,nk[k].r,nk[k].t,nk[k].b)
 	end	
 end
+-- Attach new style sdes
 local function AttachNewSides(frame,w,h)
 	local offset = 1
 	offset = frame.edgeSize /32
@@ -241,6 +246,19 @@ function Backdrop:SetBackdrop(options)
 	if options.tile then
 		hTile = true
 	end
+	self._backdrop_options = {}
+-- Copy backdrop options
+	self._backdrop_options.bgFile = options.bgFile = "bgFile"
+	self._backdrop_options.edgeFile = options.edgeFile
+	self._backdrop_options.tile = options.tile
+	self._backdrop_options.tileSize = options.tileSize
+	self._backdrop_options.edgeSize = options.edgeSize
+	self._backdrop_options.insets = {}
+	self._backdrop_options.insets.left = options.insets.left
+	self._backdrop_options.insets.right = options.insets.right
+	self._backdrop_options.insets.top = options.insets.top
+	self._backdrop_options.insets.bottom = options.insets.bottom
+--
 	if type(options.edgeFile) == "table" then
 		Backdrop.SetNewBackdrop(self,options)
 	else
@@ -271,6 +289,22 @@ function Backdrop:SetBackdrop(options)
 		self._backdrop:SetScript("OnSizeChanged", Resize)
 	end
 end
+
+-- replace std api call
+function Backdrop:GetBackdrop()
+	return self._backdrop_options
+end
+
+-- replace std api call
+function Backdrop:GetBackdropColor()
+	return self._backdrop.bgTexture:GetVertexColor()
+end
+
+-- repalce std api call
+function Backdrop:GetBackdropBorderColor()
+	return self._backdrop["EdgeTOP"]:GetVertexColor()
+end
+
 --- API
 -- change the backdrop border color
 -- @params r,g,b[,a]
