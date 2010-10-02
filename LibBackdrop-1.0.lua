@@ -64,6 +64,11 @@ end
 -- @param frame to check
 -- @return true if embedded already
 function Backdrop:IsEmbedded(frame)
+	print("IsEmbedded is now deprecate use :IsEnhanced")
+	return self:IsEnhanced(frame)
+end
+
+function Backdrop:IsEnhanced(frame)
 	return frame._backdrop ~= nil
 end
 
