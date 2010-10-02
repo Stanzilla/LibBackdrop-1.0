@@ -20,6 +20,11 @@ local edgePoints = {
 	BOTRIGHTCORNER = "BOTTOMRIGHT"
 }
 
+function Backdrop:Embed(frame)
+	print("Embed is now deprecated, use :EnhanceBackdrop instead")
+	self:EnhanceBackdrop(frame)
+end
+
 --- API
 -- This method will embed the new backdrop functionality onto your frame
 -- This will replace the standard SetBackdropxxx functions and will add
@@ -30,7 +35,7 @@ local edgePoints = {
 -- SetBackdropBorderGradientAlpha(orientation,minR,minG,minB,minA,maxR,maxG,maxB,maxA) setup a gradient on the border texture
 -- @param frame to enhance
 
-function Backdrop:Embed(frame)
+function Backdrop:EnhanceBackdrop(frame)
 	if frame._backdrop then return end
 	-- Create our enhancement frame we will use to create the backdrop
 	frame._backdrop = CreateFrame("Frame",nil,frame)
