@@ -232,23 +232,36 @@ local function AttachNewSides(frame,w,h)
 	frame["EdgeBOT"]:SetHorizTile(true)
 end
 -- Attach the side textures
-local function AttachSides(frame,w,h)
+local function AttachSides(frame,w,h,options)
 	-- Left and Right
 	for k,v in pairs(vSides) do
 		local texture = frame["Edge"..k]
-		texture:SetPoint(edgePoints[k], frame)
-		texture:SetPoint("BOTTOM", frame, "BOTTOM", 0, frame.edgeSize)
-		texture:SetPoint("TOP", frame, "TOP", 0, -frame.edgeSize)
-		texture:SetWidth(frame.edgeSize)
+		if k == "RIGHT" then
+			texture:SetPoint(edgePoints[k], frame,0.125,0)
+			texture:SetPoint("BOTTOM", frame, "BOTTOM", 0, frame.edgeSize)
+			texture:SetPoint("TOP", frame, "TOP", 0, -frame.edgeSize)
+		else
+			texture:SetPoint(edgePoints[k], frame,-0.125,0)
+			texture:SetPoint("BOTTOM", frame, "BOTTOM", 0, frame.edgeSize)
+			texture:SetPoint("TOP", frame, "TOP", 0, -frame.edgeSize)
+		end
+		texture:SetWidth(frame.edgeSize+1)
 		local y = h/frame.edgeSize
 		texture:SetTexCoord(v*.125, v*.125+.125, 0, y)
 	end
 	-- Top and Bottom
 	for k,v in pairs(hSides) do
 		local texture = frame["Edge"..k]
-		texture:SetPoint(edgePoints[k], frame)
-		texture:SetPoint("LEFT", frame, "LEFT", frame.edgeSize, 0)
-		texture:SetPoint("RIGHT", frame, "RIGHT", -frame.edgeSize, 0)
+		-- Adjusments for placement
+		if k == "TOP" then
+			texture:SetPoint(edgePoints[k], frame,0,0)
+			texture:SetPoint("LEFT", frame, "LEFT", frame.edgeSize, 0)
+			texture:SetPoint("RIGHT", frame, "RIGHT", -frame.edgeSize, 0)
+		else
+			texture:SetPoint(edgePoints[k], frame,-0.125,0)
+			texture:SetPoint("LEFT", frame, "LEFT", frame.edgeSize, 1)
+			texture:SetPoint("RIGHT", frame, "RIGHT", -frame.edgeSize, 1)
+		end
 		texture:SetHeight(frame.edgeSize)
 		local y = w/frame.edgeSize
 		local x1 = v*.125
@@ -294,14 +307,13 @@ function Backdrop:SetBackdrop(options)
 		self._backdrop.tile = options.tile
 		self._backdrop.edgeSize = options.edgeSize
 		-- Setup insets
-		self._backdrop:SetPoint("TOPLEFT",self,"TOPLEFT",-options.insets.left, options.insets.top)
-		self._backdrop:SetPoint("BOTTOMRIGHT",self,"BOTTOMRIGHT", options.insets.right, -options.insets.bottom)
-		local w,h = self:GetWidth()-options.edgeSize*2, self:GetHeight()-options.edgeSize*2
+		self._backdrop:SetAllPoints(self)
+		local w,h = self:GetWidth()-(options.edgeSize*2), self:GetHeight()-(options.edgeSize*2)
 		if options.edgeSize > 0 then
 			-- Attach croners
-			AttachCorners(self._backdrop)
+			AttachCorners(self._backdrop, options)
 			-- Attach sides
-			AttachSides(self._backdrop,w,h)	
+			AttachSides(self._backdrop,w,h, options)
 		end
 		-- Attach Background
 		self._backdrop.bgTexture:SetPoint("TOPLEFT", self._backdrop, "TOPLEFT", options.insets.left, -options.insets.top)
