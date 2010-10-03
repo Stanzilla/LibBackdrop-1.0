@@ -493,7 +493,8 @@ function Backdrop:SetNewBackdrop(options)
 	end
 end
 
-local debug = true
+--[[
+local debug = false
 
 if debug then
 	for k,v in pairs(_G) do
@@ -510,3 +511,4 @@ if debug then
 		return f
 	end
 end
+--]]
