@@ -474,7 +474,7 @@ function Backdrop:SetNewBackdrop(options)
 	-- Copy options
 	self._backdrop.tileSize = options.tileSize
 	self._backdrop.tile = options.tile
-	self._backdrop.edgeSize = options.edgeSize
+	self._backdrop.bgEdgeSize = options.edgeSize
 	-- Setup insets
 	self._backdrop:SetPoint("TOPLEFT",self,"TOPLEFT",-options.insets.left, options.insets.top)
 	self._backdrop:SetPoint("BOTTOMRIGHT",self,"BOTTOMRIGHT", options.insets.right, -options.insets.bottom)
