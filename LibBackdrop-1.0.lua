@@ -9,6 +9,8 @@ local Backdrop, oldminor = LibStub:NewLibrary(MAJOR, MINOR)
 
 if not Backdrop then return end -- No upgrade needed
 
+local MakeFrame = CreateFrame
+
 local edgePoints = {
 	TOPLEFTCORNER = "TOPLEFT",
 	TOP = "TOP",
@@ -38,12 +40,12 @@ end
 function Backdrop:EnhanceBackdrop(frame)
 	if frame._backdrop then return end
 	-- Create our enhancement frame we will use to create the backdrop
-	frame._backdrop = CreateFrame("Frame",nil,frame)
+	frame._backdrop = MakeFrame("Frame",nil,frame)
 	for k,v in pairs(edgePoints) do
 		local texture = frame:CreateTexture(nil,"BORDER")
 		frame._backdrop["Edge"..k] = texture
 	end
-	frame._backdrop["bgTexture"] = frame:CreateTexture(nil,"BACKGROUND",nil,-1)	
+	frame._backdrop["bgTexture"] = frame:CreateTexture(nil,"BACKGROUND")
 	frame.SetBackdrop = Backdrop.SetBackdrop -- Set the backdrop of the frame according to the specification provided. 
 	frame.GetBackdrop = Backdrop.GetBackdrop -- Get the backdrop of the frame for use in SetBackdrop
     frame.SetBackdropBorderColor = Backdrop.SetBackdropBorderColor --(r, g, b[, a]) - Set the frame's backdrop's border's color. 
@@ -160,15 +162,15 @@ local function Resize(frame)
 	if not frame then
 		return
 	end
-	local w,h = frame:GetWidth()-frame.edgeSize*2, frame:GetHeight()-frame.edgeSize*2
+	local w,h = frame:GetWidth()-frame.bgEdgeSize*2, frame:GetHeight()-frame.bgEdgeSize*2
 	for k,v in pairs(vSides) do
 		local t = frame["Edge"..k]
-		local y = h/frame.edgeSize
+		local y = h/frame.bgEdgeSize
 		t:SetTexCoord(v*.125, v*.125+.125, 0, y)
 	end
 	for k,v in pairs(hSides) do
 		local t = frame["Edge"..k]
-		local y = w/frame.edgeSize
+		local y = w/frame.bgEdgeSize
 		local x1 = v*.125
 		local x2 = v*.125+.125
 		t:SetTexCoord(x1,0, x2,0, x1,y, x2, y)
@@ -179,14 +181,26 @@ local function Resize(frame)
 end
 
 -- Attach the corner textures
-local function AttachCorners(frame)
+local function AttachCorners(frame,options)
+	local nudge = 0
+	if options.edgeSize >= 32 then
+		nudge = options.edgeSize/32
+	end
+	if options.edgeSize <= 16 then
+		nudge = options.edgeSize/16
+	end
 	for k,v in pairs(corners) do
 		local texture = frame["Edge"..k]
-		texture:SetPoint(edgePoints[k], frame)
-		texture:SetWidth(frame.edgeSize)
-		texture:SetHeight(frame.edgeSize)
+		texture:ClearAllPoints()
+		texture:SetWidth(options.edgeSize)
+		texture:SetHeight(options.edgeSize)
 		texture:SetTexCoord(v*.125,v*.125+.125, 0,1)
 	end
+	frame["EdgeTOPLEFTCORNER"]:SetPoint(edgePoints["TOPLEFTCORNER"],frame,0,nudge)
+	frame["EdgeBOTLEFTCORNER"]:SetPoint(edgePoints["BOTLEFTCORNER"],frame,0,-nudge)
+	frame["EdgeTOPRIGHTCORNER"]:SetPoint(edgePoints["TOPRIGHTCORNER"],frame,0,nudge)
+	frame["EdgeBOTRIGHTCORNER"]:SetPoint(edgePoints["BOTRIGHTCORNER"],frame,0,-nudge)
+
 end
 local nk = {
 	["TOPLEFTCORNER"] = { l = 0, r = 0.5, t= 0, b=0.5},
@@ -199,71 +213,88 @@ local function AttachNewCorners(frame)
 	for k,v in pairs(corners) do
 		local texture = frame["Edge"..k]
 		texture:SetPoint(edgePoints[k], frame)
-		texture:SetWidth(frame.edgeSize)
-		texture:SetHeight(frame.edgeSize)
+		texture:SetWidth(frame.bgEdgeSize)
+		texture:SetHeight(frame.bgEdgeSize)
 		texture:SetTexCoord(nk[k].l,nk[k].r,nk[k].t,nk[k].b)
 	end	
 end
 -- Attach new style sdes
 local function AttachNewSides(frame,w,h)
 	local offset = 1
-	offset = frame.edgeSize /32
+	offset = frame.bgEdgeSize /32
 	-- Left and Right
 	frame["EdgeLEFT"]:SetPoint("TOPLEFT",frame["EdgeTOPLEFTCORNER"],"BOTTOMLEFT",offset,0)
 	frame["EdgeLEFT"]:SetPoint("BOTTOMLEFT",frame["EdgeBOTLEFTCORNER"],"TOPLEFT",offset,0)
-	frame["EdgeLEFT"]:SetWidth(frame.edgeSize/2)
+	frame["EdgeLEFT"]:SetWidth(frame.bgEdgeSize/2)
 	frame["EdgeLEFT"]:SetVertTile(true)
 	frame["EdgeLEFT"]:SetHorizTile(false)
 	frame["EdgeRIGHT"]:SetPoint("TOPRIGHT",frame["EdgeTOPRIGHTCORNER"],"BOTTOMRIGHT")
 	frame["EdgeRIGHT"]:SetPoint("BOTTOMRIGHT",frame["EdgeBOTRIGHTCORNER"],"TOPRIGHT")
-	frame["EdgeRIGHT"]:SetWidth(frame.edgeSize/2)
+	frame["EdgeRIGHT"]:SetWidth(frame.bgEdgeSize/2)
 	frame["EdgeRIGHT"]:SetVertTile(true)
 	frame["EdgeRIGHT"]:SetHorizTile(false)
 	-- Top and Bottom
 	frame["EdgeTOP"]:SetPoint("TOPLEFT",frame["EdgeTOPLEFTCORNER"],"TOPRIGHT",0,-offset)
 	frame["EdgeTOP"]:SetPoint("TOPRIGHT",frame["EdgeTOPRIGHTCORNER"],"TOPLEFT",0,-offset)
-	frame["EdgeTOP"]:SetHeight(frame.edgeSize/2)
+	frame["EdgeTOP"]:SetHeight(frame.bgEdgeSize/2)
 	frame["EdgeTOP"]:SetVertTile(false)
 	frame["EdgeTOP"]:SetHorizTile(true)
 	frame["EdgeBOT"]:SetPoint("BOTTOMLEFT",frame["EdgeBOTLEFTCORNER"],"BOTTOMRIGHT")
 	frame["EdgeBOT"]:SetPoint("BOTTOMRIGHT",frame["EdgeBOTRIGHTCORNER"],"BOTTOMLEFT")
-	frame["EdgeBOT"]:SetHeight(frame.edgeSize/2)
+	frame["EdgeBOT"]:SetHeight(frame.bgEdgeSize/2)
 	frame["EdgeBOT"]:SetVertTile(false)
 	frame["EdgeBOT"]:SetHorizTile(true)
 end
 -- Attach the side textures
 local function AttachSides(frame,w,h,options)
+	local nudge = 0.125
+	if options.edgeSize >= 32 then
+		nudge = nudge * (options.edgeSize/32)
+	end
+	if options.edgeSize <= 16 then
+		nudge = nudge / (16/options.edgeSize)
+	end
+	local offset = 0
+	if options.edgeSize >= 32 then
+		offset = options.edgeSize/32
+	end
+	if options.edgeSize <= 16 then
+		offset = options.edgeSize/16
+	end
+	-- SOOOO Issue here is when resetting an existing border the top area gets jacked up
 	-- Left and Right
 	for k,v in pairs(vSides) do
 		local texture = frame["Edge"..k]
+		texture:ClearAllPoints()
 		if k == "RIGHT" then
-			texture:SetPoint(edgePoints[k], frame,0.125,0)
-			texture:SetPoint("BOTTOM", frame, "BOTTOM", 0, frame.edgeSize)
-			texture:SetPoint("TOP", frame, "TOP", 0, -frame.edgeSize)
+			texture:SetPoint(edgePoints[k], frame, nudge,0)
+			texture:SetPoint("BOTTOM", frame, "BOTTOM", 0, options.edgeSize-offset)
+			texture:SetPoint("TOP", frame, "TOP", 0, -options.edgeSize+offset)
 		else
-			texture:SetPoint(edgePoints[k], frame,-0.125,0)
-			texture:SetPoint("BOTTOM", frame, "BOTTOM", 0, frame.edgeSize)
-			texture:SetPoint("TOP", frame, "TOP", 0, -frame.edgeSize)
+			texture:SetPoint(edgePoints[k], frame, nudge,0)
+			texture:SetPoint("BOTTOM", frame, "BOTTOM", 0, options.edgeSize-offset)
+			texture:SetPoint("TOP", frame, "TOP", 0, -options.edgeSize+offset)
 		end
-		texture:SetWidth(frame.edgeSize+1)
-		local y = h/frame.edgeSize
+		texture:SetWidth(options.edgeSize)
+		local y = h/options.edgeSize
 		texture:SetTexCoord(v*.125, v*.125+.125, 0, y)
 	end
 	-- Top and Bottom
 	for k,v in pairs(hSides) do
 		local texture = frame["Edge"..k]
+		texture:ClearAllPoints()
 		-- Adjusments for placement
 		if k == "TOP" then
-			texture:SetPoint(edgePoints[k], frame,0,0)
-			texture:SetPoint("LEFT", frame, "LEFT", frame.edgeSize, 0)
-			texture:SetPoint("RIGHT", frame, "RIGHT", -frame.edgeSize, 0)
+			texture:SetPoint(edgePoints[k], frame, nudge, offset)
+			texture:SetPoint("LEFT", frame, "LEFT", options.edgeSize, 0)
+			texture:SetPoint("RIGHT", frame, "RIGHT", -options.edgeSize, 0)
 		else
-			texture:SetPoint(edgePoints[k], frame,-0.125,0)
-			texture:SetPoint("LEFT", frame, "LEFT", frame.edgeSize, 1)
-			texture:SetPoint("RIGHT", frame, "RIGHT", -frame.edgeSize, 1)
+			texture:SetPoint(edgePoints[k], frame,-nudge,-offset)
+			texture:SetPoint("LEFT", frame, "LEFT", options.edgeSize, 1)
+			texture:SetPoint("RIGHT", frame, "RIGHT", -options.edgeSize, 1)
 		end
-		texture:SetHeight(frame.edgeSize)
-		local y = w/frame.edgeSize
+		texture:SetHeight(options.edgeSize)
+		local y = w/options.edgeSize
 		local x1 = v*.125
 		local x2 = v*.125+.125
 		if k == "TOP" then -- Flip
@@ -276,13 +307,20 @@ end
 --- API
 -- Setup the backdrop see normal wow api for table options
 function Backdrop:SetBackdrop(options)
+	if not options then return end
 	-- Set textures
 	local vTile = false
 	local hTile = false
 	if options.tile then
 		hTile = true
 	end
-	self._backdrop_options = {}
+	local reset = false
+	if self._backdrop_options then
+		table.wipe(self._backdrop_options)
+		reset = true
+	else
+		self._backdrop_options = {}
+	end
 -- Copy backdrop options
 	self._backdrop_options.bgFile = options.bgFile
 	self._backdrop_options.edgeFile = options.edgeFile
@@ -294,7 +332,6 @@ function Backdrop:SetBackdrop(options)
 	self._backdrop_options.insets.right = options.insets.right
 	self._backdrop_options.insets.top = options.insets.top
 	self._backdrop_options.insets.bottom = options.insets.bottom
---
 	if type(options.edgeFile) == "table" then
 		Backdrop.SetNewBackdrop(self,options)
 	else
@@ -305,23 +342,28 @@ function Backdrop:SetBackdrop(options)
 		-- Copy options
 		self._backdrop.tileSize = options.tileSize
 		self._backdrop.tile = options.tile
-		self._backdrop.edgeSize = options.edgeSize
+		self._backdrop.bgEdgeSize = options.edgeSize
 		-- Setup insets
+		self._backdrop:ClearAllPoints()
 		self._backdrop:SetAllPoints(self)
 		local w,h = self:GetWidth()-(options.edgeSize*2), self:GetHeight()-(options.edgeSize*2)
 		if options.edgeSize > 0 then
 			-- Attach croners
-			AttachCorners(self._backdrop, options)
+			AttachCorners(self._backdrop, self._backdrop_options)
 			-- Attach sides
-			AttachSides(self._backdrop,w,h, options)
+			AttachSides(self._backdrop,w,h, self._backdrop_options)
 		end
 		-- Attach Background
+		self._backdrop.bgTexture:ClearAllPoints()
 		self._backdrop.bgTexture:SetPoint("TOPLEFT", self._backdrop, "TOPLEFT", options.insets.left, -options.insets.top)
 		self._backdrop.bgTexture:SetPoint("BOTTOMRIGHT", self._backdrop, "BOTTOMRIGHT", -options.insets.right, options.insets.bottom)
 		if options.tile then
 			self._backdrop.bgTexture:SetTexCoord(0,w/options.tileSize, 0,h/options.tileSize)		
 		end
 		self._backdrop:SetScript("OnSizeChanged", Resize)
+	end
+	if reset then
+		Resize(self._backdrop)
 	end
 end
 
@@ -448,5 +490,23 @@ function Backdrop:SetNewBackdrop(options)
 	self._backdrop.bgTexture:SetPoint("BOTTOMRIGHT", self._backdrop, "BOTTOMRIGHT", -options.insets.right, options.insets.bottom)
 	if options.tile then
 		self._backdrop.bgTexture:SetTexCoord(0,w/options.tileSize, 0,h/options.tileSize)		
+	end
+end
+
+local debug = true
+
+if debug then
+	for k,v in pairs(_G) do
+		-- Reset any existing frames
+		if type(v) == "table" and v.GetObjectype and v:GetObjectType() == "Frame" then
+			local ob = v:GetBackdrop()
+			Backdrop:EhanceBackdrop(v)
+			v:SetBackdrop(ob)
+		end
+	end
+	CreateFrame = function(...)
+		local f = MakeFrame(...)
+		Backdrop:EnhanceBackdrop(f)
+		return f
 	end
 end
