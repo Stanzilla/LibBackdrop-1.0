@@ -1,7 +1,7 @@
 ## Interface: 40000
 ## X-Compatible-With: 30300
 ## Title: Lib: Backdrop-1.0
-## Notes: Replacement Library for SetBackDrop.
+## Notes: Dropin replacement library for SetBackDrop
 ## Author: kagaro, lilsparky
 ## X-Website: http://www.wowace.com
 ## X-Category: Library
