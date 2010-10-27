@@ -46,9 +46,9 @@ function Backdrop:EnhanceBackdrop(frame)
 		frame._backdrop["Edge"..k] = texture
 	end
 	frame._backdrop["bgTexture"] = frame:CreateTexture(nil,"BACKGROUND")
-	frame.SetBackdrop = Backdrop.SetBackdrop -- Set the backdrop of the frame according to the specification provided. 
+	frame.SetBackdrop = Backdrop.SetBackdrop -- Set the backdrop of the frame according to the specification provided.
 	frame.GetBackdrop = Backdrop.GetBackdrop -- Get the backdrop of the frame for use in SetBackdrop
-    frame.SetBackdropBorderColor = Backdrop.SetBackdropBorderColor --(r, g, b[, a]) - Set the frame's backdrop's border's color. 
+    frame.SetBackdropBorderColor = Backdrop.SetBackdropBorderColor --(r, g, b[, a]) - Set the frame's backdrop's border's color.
     frame.GetBackdropBorderColor = Backdrop.GetBackdropBorderColor -- Get the frame's backdrop's border's color.
     frame.SetBackdropColor = Backdrop.SetBackdropColor --(r, g, b[, a]) - Set the frame's backdrop color.
 	frame.GetBackdropColor = Backdrop.GetBackdropColor -- Get the backdrop color
@@ -108,10 +108,10 @@ end
 --]]
 
 --[[
-	{ 
-	  bgFile = "bgFile", 
-	  edgeFile = "edgeFile", tile = false, tileSize = 0, edgeSize = 32, 
-	  insets = { left = 0, right = 0, top = 0, bottom = 0 
+	{
+	  bgFile = "bgFile",
+	  edgeFile = "edgeFile", tile = false, tileSize = 0, edgeSize = 32,
+	  insets = { left = 0, right = 0, top = 0, bottom = 0
 	}
 	Alternatily you can use the new blizz style of borders
 	where you have a corner file and 1 file for each side. To build those style of borders
@@ -125,7 +125,7 @@ end
 		["LEFT"] = "Interface/DialogFrame/DialogFrame-Left",
 		["TOP"] = "Interface/DialogFrame/DialogFrame-Top",
 		["BOT"] = "Interface/DialogFrame/DialogFrame-Bot",
-		["RIGHT"] = "Interface/DialogFrame/DialogFrame-Right",	
+		["RIGHT"] = "Interface/DialogFrame/DialogFrame-Right",
 	}
 --]]
 
@@ -154,7 +154,7 @@ local vSides = {
 }
 local hSides = {
 	TOP = 2,
-	BOT = 3,	
+	BOT = 3,
 }
 
 -- Resizing hook to keep them aligned
@@ -163,6 +163,10 @@ local function Resize(frame)
 		return
 	end
 	local w,h = frame:GetWidth()-frame.bgEdgeSize*2, frame:GetHeight()-frame.bgEdgeSize*2
+	if w < 1 or h < 1 then
+		-- frame was resized to nothing.
+		return
+	end
 	for k,v in pairs(vSides) do
 		local t = frame["Edge"..k]
 		local y = h/frame.bgEdgeSize
@@ -216,7 +220,7 @@ local function AttachNewCorners(frame)
 		texture:SetWidth(frame.bgEdgeSize)
 		texture:SetHeight(frame.bgEdgeSize)
 		texture:SetTexCoord(nk[k].l,nk[k].r,nk[k].t,nk[k].b)
-	end	
+	end
 end
 -- Attach new style sdes
 local function AttachNewSides(frame,w,h)
@@ -300,7 +304,7 @@ local function AttachSides(frame,w,h,options)
 		if k == "TOP" then -- Flip
 			x1,x2 = x2, x1
 		end
-		texture:SetTexCoord(x1,0, x2,0, x1,y, x2, y)		
+		texture:SetTexCoord(x1,0, x2,0, x1,y, x2, y)
 	end
 end
 
@@ -358,7 +362,7 @@ function Backdrop:SetBackdrop(options)
 		self._backdrop.bgTexture:SetPoint("TOPLEFT", self._backdrop, "TOPLEFT", options.insets.left, -options.insets.top)
 		self._backdrop.bgTexture:SetPoint("BOTTOMRIGHT", self._backdrop, "BOTTOMRIGHT", -options.insets.right, options.insets.bottom)
 		if options.tile then
-			self._backdrop.bgTexture:SetTexCoord(0,w/options.tileSize, 0,h/options.tileSize)		
+			self._backdrop.bgTexture:SetTexCoord(0,w/options.tileSize, 0,h/options.tileSize)
 		end
 		self._backdrop:SetScript("OnSizeChanged", Resize)
 	end
@@ -424,7 +428,7 @@ function Backdrop:SetBackdropBorderGradient(orientation,minR,minG,minB,maxR,maxG
 		self._backdrop["EdgeTOP"]:SetGradient(orientation,minR,minG,minB,maxR,maxG,maxB)
 		self._backdrop["EdgeTOPRIGHTCORNER"]:SetGradient(orientation,maxR,maxG,maxB,maxR,maxG,maxB)
 		self._backdrop["EdgeBOTRIGHTCORNER"]:SetGradient(orientation,maxR,maxG,maxB,maxR,maxG,maxB)
-		self._backdrop["EdgeRIGHT"]:SetGradient(orientation,maxR,maxG,maxB,maxR,maxG,maxB)		
+		self._backdrop["EdgeRIGHT"]:SetGradient(orientation,maxR,maxG,maxB,maxR,maxG,maxB)
 	else
 		self._backdrop["EdgeTOPLEFTCORNER"]:SetGradient(orientation,maxR,maxG,maxB,maxR,maxG,maxB)
 		self._backdrop["EdgeBOTLEFTCORNER"]:SetGradient(orientation,minR,minG,minB,minR,minG,minB)
@@ -433,7 +437,7 @@ function Backdrop:SetBackdropBorderGradient(orientation,minR,minG,minB,maxR,maxG
 		self._backdrop["EdgeTOP"]:SetGradient(orientation,maxR,maxG,maxB,maxR,maxG,maxB)
 		self._backdrop["EdgeTOPRIGHTCORNER"]:SetGradient(orientation,maxR,maxG,maxB,maxR,maxG,maxB)
 		self._backdrop["EdgeBOTRIGHTCORNER"]:SetGradient(orientation,minR,minG,minB,minR,minG,minB)
-		self._backdrop["EdgeRIGHT"]:SetGradient(orientation,minR,minG,minB,maxR,maxG,maxB)		
+		self._backdrop["EdgeRIGHT"]:SetGradient(orientation,minR,minG,minB,maxR,maxG,maxB)
 	end
 end
 
@@ -450,7 +454,7 @@ function Backdrop:SetBackdropBorderGradientAlpha(orientation,minR,minG,minB,minA
 		self._backdrop["EdgeTOP"]:SetGradientAlpha(orientation,minR,minG,minB,minA,maxR,maxG,maxB,maxA)
 		self._backdrop["EdgeTOPRIGHTCORNER"]:SetGradientAlpha(orientation,maxR,maxG,maxB,maxA,maxR,maxG,maxB,maxA)
 		self._backdrop["EdgeBOTRIGHTCORNER"]:SetGradientAlpha(orientation,maxR,maxG,maxB,maxA,maxR,maxG,maxB,maxA)
-		self._backdrop["EdgeRIGHT"]:SetGradientAlpha(orientation,maxR,maxG,maxB,maxA,maxR,maxG,maxB,maxA)		
+		self._backdrop["EdgeRIGHT"]:SetGradientAlpha(orientation,maxR,maxG,maxB,maxA,maxR,maxG,maxB,maxA)
 	else
 		self._backdrop["EdgeTOPLEFTCORNER"]:SetGradientAlpha(orientation,maxR,maxG,maxB,maxA,maxR,maxG,maxB,maxA)
 		self._backdrop["EdgeBOTLEFTCORNER"]:SetGradientAlpha(orientation,minR,minG,minB,minA,minR,minG,minB,minA)
@@ -459,7 +463,7 @@ function Backdrop:SetBackdropBorderGradientAlpha(orientation,minR,minG,minB,minA
 		self._backdrop["EdgeTOP"]:SetGradientAlpha(orientation,maxR,maxG,maxB,maxA,maxR,maxG,maxB,maxA)
 		self._backdrop["EdgeTOPRIGHTCORNER"]:SetGradientAlpha(orientation,maxR,maxG,maxB,maxA,maxR,maxG,maxB,maxA)
 		self._backdrop["EdgeBOTRIGHTCORNER"]:SetGradientAlpha(orientation,minR,minG,minB,minA,minR,minG,minB,minA)
-		self._backdrop["EdgeRIGHT"]:SetGradientAlpha(orientation,minR,minG,minB,minA,maxR,maxG,maxB,maxA)		
+		self._backdrop["EdgeRIGHT"]:SetGradientAlpha(orientation,minR,minG,minB,minA,maxR,maxG,maxB,maxA)
 	end
 end
 
@@ -483,13 +487,13 @@ function Backdrop:SetNewBackdrop(options)
 		-- Attach croners
 		AttachNewCorners(self._backdrop)
 		-- Attach sides
-		AttachNewSides(self._backdrop,w,h)	
+		AttachNewSides(self._backdrop,w,h)
 	end
 	-- Attach Background
 	self._backdrop.bgTexture:SetPoint("TOPLEFT", self._backdrop, "TOPLEFT", options.insets.left, -options.insets.top)
 	self._backdrop.bgTexture:SetPoint("BOTTOMRIGHT", self._backdrop, "BOTTOMRIGHT", -options.insets.right, options.insets.bottom)
 	if options.tile then
-		self._backdrop.bgTexture:SetTexCoord(0,w/options.tileSize, 0,h/options.tileSize)		
+		self._backdrop.bgTexture:SetTexCoord(0,w/options.tileSize, 0,h/options.tileSize)
 	end
 end
 
