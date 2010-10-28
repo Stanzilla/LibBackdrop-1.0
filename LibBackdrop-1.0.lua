@@ -157,13 +157,20 @@ local hSides = {
 	BOT = 3,
 }
 
+local NaN = {
+	["nan"] = true,
+	["-1.#IND"] = true,
+	["-1.#INF"] = true,
+	["nil"] = true,
+}
+
 -- Resizing hook to keep them aligned
 local function Resize(frame)
 	if not frame then
 		return
 	end
 	local w,h = frame:GetWidth()-frame.bgEdgeSize*2, frame:GetHeight()-frame.bgEdgeSize*2
-	if w ~= w or h ~= h then
+	if Nan[tostring(w)] or Nan[tostring(h)] then
 		-- frame was resized to nothing.
 		return
 	end
