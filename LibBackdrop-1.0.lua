@@ -4,7 +4,7 @@
 	and decorate a given frame with a backdrop.
 	Credits to Lilsparky for doing the math for cutting up the quadrants
 --]]
-local MAJOR, MINOR = "LibBackdrop-1.0", 1
+local MAJOR, MINOR = "LibBackdrop-1.0", 2
 local Backdrop, oldminor = LibStub:NewLibrary(MAJOR, MINOR)
 
 if not Backdrop then return end -- No upgrade needed
@@ -170,7 +170,7 @@ local function Resize(frame)
 		return
 	end
 	local w,h = frame:GetWidth()-frame.bgEdgeSize*2, frame:GetHeight()-frame.bgEdgeSize*2
-	if Nan[tostring(w)] or Nan[tostring(h)] then
+	if NaN[tostring(w)] or NaN[tostring(h)] then
 		-- frame was resized to nothing.
 		return
 	end
