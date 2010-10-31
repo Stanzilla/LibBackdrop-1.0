@@ -161,7 +161,10 @@ local NaN = {
 	["nan"] = true,
 	["-1.#IND"] = true,
 	["-1.#INF"] = true,
+	["1.#IND"] = true,
+	["1.#INF"] = true,
 	["nil"] = true,
+	["inf"] = true,
 }
 
 -- Resizing hook to keep them aligned
@@ -170,24 +173,26 @@ local function Resize(frame)
 		return
 	end
 	local w,h = frame:GetWidth()-frame.bgEdgeSize*2, frame:GetHeight()-frame.bgEdgeSize*2
-	if Nan[tostring(w)] or Nan[tostring(h)] then
+	if w-1 == w or h-1 == h then
 		-- frame was resized to nothing.
 		return
 	end
-	for k,v in pairs(vSides) do
-		local t = frame["Edge"..k]
-		local y = h/frame.bgEdgeSize
-		t:SetTexCoord(v*.125, v*.125+.125, 0, y)
-	end
-	for k,v in pairs(hSides) do
-		local t = frame["Edge"..k]
-		local y = w/frame.bgEdgeSize
-		local x1 = v*.125
-		local x2 = v*.125+.125
-		t:SetTexCoord(x1,0, x2,0, x1,y, x2, y)
-	end
-	if frame.tile then
-		frame.bgTexture:SetTexCoord(0,w/frame.tileSize, 0,h/frame.tileSize)
+	if (w-1 < w) and (h-1 < h) and h > 0 and w > 0 then
+		for k,v in pairs(vSides) do
+			local t = frame["Edge"..k]
+			local y = h/frame.bgEdgeSize
+			t:SetTexCoord(v*.125, v*.125+.125, 0, y)
+		end
+		for k,v in pairs(hSides) do
+			local t = frame["Edge"..k]
+			local y = w/frame.bgEdgeSize
+			local x1 = v*.125
+			local x2 = v*.125+.125
+			t:SetTexCoord(x1,0, x2,0, x1,y, x2, y)
+		end
+		if frame.tile then
+			frame.bgTexture:SetTexCoord(0,w/frame.tileSize, 0,h/frame.tileSize)
+		end
 	end
 end
 
