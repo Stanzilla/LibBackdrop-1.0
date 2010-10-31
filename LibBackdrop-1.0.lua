@@ -4,7 +4,7 @@
 	and decorate a given frame with a backdrop.
 	Credits to Lilsparky for doing the math for cutting up the quadrants
 --]]
-local MAJOR, MINOR = "LibBackdrop-1.0", 1
+local MAJOR, MINOR = "LibBackdrop-1.0", 2
 local Backdrop, oldminor = LibStub:NewLibrary(MAJOR, MINOR)
 
 if not Backdrop then return end -- No upgrade needed
