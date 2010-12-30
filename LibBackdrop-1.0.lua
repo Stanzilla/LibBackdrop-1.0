@@ -172,6 +172,9 @@ local function Resize(frame)
 	if not frame then
 		return
 	end
+	if frame.bgEdgeSize == 0 then
+		return
+	end
 	local w,h = frame:GetWidth()-frame.bgEdgeSize*2, frame:GetHeight()-frame.bgEdgeSize*2
 	if w-1 == w or h-1 == h then
 		-- frame was resized to nothing.
