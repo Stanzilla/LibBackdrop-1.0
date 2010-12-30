@@ -22,11 +22,6 @@ local edgePoints = {
 	BOTRIGHTCORNER = "BOTTOMRIGHT"
 }
 
-function Backdrop:Embed(frame)
-	print("Embed is now deprecated, use :EnhanceBackdrop instead")
-	self:EnhanceBackdrop(frame)
-end
-
 --- API
 -- This method will embed the new backdrop functionality onto your frame
 -- This will replace the standard SetBackdropxxx functions and will add
@@ -59,15 +54,6 @@ function Backdrop:EnhanceBackdrop(frame)
 	frame.GetBackdropBorderSection = Backdrop.GetBackdropBorderSection -- New API
 	frame.GetBackdropBackground = Backdrop.GetBackdropBackground -- New API
 	frame.BorderTextureFunction = Backdrop.BorderTextureFunction
-end
-
---- API
--- this method will let you test to see if a frame has been embedded with enchanced backdrop
--- @param frame to check
--- @return true if embedded already
-function Backdrop:IsEmbedded(frame)
-	print("IsEmbedded is now deprecate use :IsEnhanced")
-	return self:IsEnhanced(frame)
 end
 
 function Backdrop:IsEnhanced(frame)
@@ -130,6 +116,16 @@ end
 --]]
 
 local tilingOptions = {
+	["LEFT"] = true,
+	["RIGHT"] = true,
+	["TOP"] = true,
+	["BOTTOM"] = true,
+	["TOPLEFTCORNER"] = false,
+	["TOPRIGHTCORNER"] = false,
+	["BOTLEFTCORNER"] = false,
+	["BOTRIGHTCORNER"] = false,
+}
+local tilingOptionsV = {
 	["LEFT"] = true,
 	["RIGHT"] = true,
 	["TOP"] = true,
