@@ -119,7 +119,7 @@ local tilingOptions = {
 	["LEFT"] = true,
 	["RIGHT"] = true,
 	["TOP"] = true,
-	["BOTTOM"] = true,
+	["BOT"] = true,
 	["TOPLEFTCORNER"] = false,
 	["TOPRIGHTCORNER"] = false,
 	["BOTLEFTCORNER"] = false,
@@ -129,7 +129,7 @@ local tilingOptionsV = {
 	["LEFT"] = true,
 	["RIGHT"] = true,
 	["TOP"] = true,
-	["BOTTOM"] = true,
+	["BOT"] = true,
 	["TOPLEFTCORNER"] = false,
 	["TOPRIGHTCORNER"] = false,
 	["BOTLEFTCORNER"] = false,
@@ -187,6 +187,9 @@ local function Resize(frame)
 			local y = w/frame.bgEdgeSize
 			local x1 = v*.125
 			local x2 = v*.125+.125
+			if k == "TOP" then -- Flip
+				x1,x2 = x2, x1
+			end
 			t:SetTexCoord(x1,0, x2,0, x1,y, x2, y)
 		end
 		if frame.tile then
