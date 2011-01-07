@@ -187,9 +187,6 @@ local function Resize(frame)
 			local y = w/frame.bgEdgeSize
 			local x1 = v*.125
 			local x2 = v*.125+.125
-			if k == "TOP" then -- Flip
-				x1,x2 = x2, x1
-			end
 			t:SetTexCoord(x1,0, x2,0, x1,y, x2, y)
 		end
 		if frame.tile then
@@ -315,9 +312,9 @@ local function AttachSides(frame,w,h,options)
 		local y = w/options.edgeSize
 		local x1 = v*.125
 		local x2 = v*.125+.125
-		if k == "TOP" then -- Flip
-			x1,x2 = x2, x1
-		end
+		--if k == "TOP" then -- Flip
+		--	x1,x2 = x2, x1
+		--end
 		texture:SetTexCoord(x1,0, x2,0, x1,y, x2, y)
 	end
 end
