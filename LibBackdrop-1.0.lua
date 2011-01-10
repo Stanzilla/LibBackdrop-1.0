@@ -322,7 +322,15 @@ end
 --- API
 -- Setup the backdrop see normal wow api for table options
 function Backdrop:SetBackdrop(options)
-	if not options then return end
+	if not options then
+		-- Clear any options that were previously set
+		self._backdrop["bgTexture"]:SetTexture(nil)
+		for k,v in pairs(edgePoints) do
+			self._backdrop["Edge"..k]:SetTexture(nil)
+		end
+		table.wipe(self._backdrop_options)
+		return
+	end
 	-- Set textures
 	local vTile = false
 	local hTile = false
