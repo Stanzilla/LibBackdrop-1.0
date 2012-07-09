@@ -179,17 +179,23 @@ local function Resize(frame)
 	if (w-1 < w) and (h-1 < h) and h > 0 and w > 0 then
 		for k,v in pairs(vSides) do
 			local t = frame["Edge"..k]
-			local y = h/frame.bgEdgeSize
+			local y = 0
+			if frame.bgEdgeSize > 0 then
+				y = h/frame.bgEdgeSize
+			end
 			t:SetTexCoord(v*.125, v*.125+.125, 0, y)
 		end
 		for k,v in pairs(hSides) do
 			local t = frame["Edge"..k]
-			local y = w/frame.bgEdgeSize
+			local y = 0
+			if frame.bgEdgeSize > 0 then
+				y = w/frame.bgEdgeSize
+			end
 			local x1 = v*.125
 			local x2 = v*.125+.125
 			t:SetTexCoord(x1,0, x2,0, x1,y, x2, y)
 		end
-		if frame.tile then
+		if frame.tile and frame.tileSize > 0 then
 			frame.bgTexture:SetTexCoord(0,w/frame.tileSize, 0,h/frame.tileSize)
 		end
 	end
@@ -267,7 +273,11 @@ local function AttachSides(frame,w,h,options)
 		nudge = nudge * (options.edgeSize/32)
 	end
 	if options.edgeSize <= 16 then
-		nudge = nudge / (16/options.edgeSize)
+		if options.edgeSize > 0 then
+			nudge = nudge / (16/options.edgeSize)
+		else
+			nudge = 0
+		end
 	end
 	local offset = 0
 	if options.edgeSize >= 32 then
@@ -291,7 +301,10 @@ local function AttachSides(frame,w,h,options)
 			texture:SetPoint("TOP", frame, "TOP", 0, -options.edgeSize+offset)
 		end
 		texture:SetWidth(options.edgeSize)
-		local y = h/options.edgeSize
+		local y = 0
+		if options.edgeSize > 0 then
+			y = h/options.edgeSize
+		end
 		texture:SetTexCoord(v*.125, v*.125+.125, 0, y)
 	end
 	-- Top and Bottom
@@ -309,7 +322,10 @@ local function AttachSides(frame,w,h,options)
 			texture:SetPoint("RIGHT", frame, "RIGHT", -options.edgeSize, 1)
 		end
 		texture:SetHeight(options.edgeSize)
-		local y = w/options.edgeSize
+		local y = 0
+		if options.edgeSize > 0 then
+			y = w/options.edgeSize
+		end
 		local x1 = v*.125
 		local x2 = v*.125+.125
 		--if k == "TOP" then -- Flip
@@ -511,7 +527,7 @@ function Backdrop:SetNewBackdrop(options)
 	-- Attach Background
 	self._backdrop.bgTexture:SetPoint("TOPLEFT", self._backdrop, "TOPLEFT", options.insets.left, -options.insets.top)
 	self._backdrop.bgTexture:SetPoint("BOTTOMRIGHT", self._backdrop, "BOTTOMRIGHT", -options.insets.right, options.insets.bottom)
-	if options.tile then
+	if options.tile and options.tileSize > 0 then
 		self._backdrop.bgTexture:SetTexCoord(0,w/options.tileSize, 0,h/options.tileSize)
 	end
 end
