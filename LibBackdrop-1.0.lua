@@ -41,12 +41,36 @@ function Backdrop:EnhanceBackdrop(frame)
 		frame._backdrop["Edge"..k] = texture
 	end
 	frame._backdrop["bgTexture"] = frame:CreateTexture(nil,"BACKGROUND")
+	if frame._SetBackdrop == nil then
+		frame._SetBackdrop = frame.SetBackdrop
+	end
 	frame.SetBackdrop = Backdrop.SetBackdrop -- Set the backdrop of the frame according to the specification provided.
+
+	if frame._GetBackdrop == nil then
+		frame._GetBackdrop = frame.GetBackdrop
+	end
 	frame.GetBackdrop = Backdrop.GetBackdrop -- Get the backdrop of the frame for use in SetBackdrop
+
+	if frame._SetBackdropBorderColor == nil then
+		frame._SetBackdropBorderColor = frame.SetBackdropBorderColor
+	end
     frame.SetBackdropBorderColor = Backdrop.SetBackdropBorderColor --(r, g, b[, a]) - Set the frame's backdrop's border's color.
+
+	if frame._GetBackdropBorderColor == nil then
+		frame._GetBackdropBorderColor = frame.GetBackdropBorderColor
+	end
     frame.GetBackdropBorderColor = Backdrop.GetBackdropBorderColor -- Get the frame's backdrop's border's color.
+
+	if frame._SetBackdropColor == nil then
+		frame._SetBackdropColor = frame.SetBackdropColor
+	end
     frame.SetBackdropColor = Backdrop.SetBackdropColor --(r, g, b[, a]) - Set the frame's backdrop color.
+
+	if frame._GetBackdropColor == nil then
+		frame._GetBackdropColor = frame.GetBackdropColor
+	end
 	frame.GetBackdropColor = Backdrop.GetBackdropColor -- Get the backdrop color
+	-- Custom apis that arent present on existing frames
 	frame.SetBackdropGradient = Backdrop.SetBackdropGradient -- New API
 	frame.SetBackdropGradientAlpha = Backdrop.SetBackdropGradientAlpha -- New API
 	frame.SetBackdropBorderGradient = Backdrop.SetBackdropBorderGradient -- New API
@@ -58,6 +82,30 @@ end
 
 function Backdrop:IsEnhanced(frame)
 	return frame._backdrop ~= nil
+end
+
+function Backdrop:DisableEhancements(frame)
+	if frame._backdrop then
+		frame._backdrop:Hide()
+		frame.SetBackdrop = frame._SetBackdrop
+		frame.GetBackdrop = frame._GetBackdrop
+		frame.SetBackdropBorderColor = frame._SetBackdropBorderColor
+		frame.GetBackdropBorderColor = frame._GetBackdropBorderColor
+		frame.SetBackdropColor = frame._SetBackdropColor
+		frame.GetBackdropColor = frame._GetBackdropColor
+	end
+end
+
+function Backdrop:EnableEnhancements(frame)
+	if frame._backdrop then
+		frame._backdrop:Show()
+		frame.SetBackdrop = Backdrop.SetBackdrop
+		frame.GetBackdrop = Backdrop.GetBackdrop
+		frame.SetBackdropBorderColor = Backdrop.SetBackdropBorderColor
+		frame.GetBackdropBorderColor = Backdrop.GetBackdropBorderColor
+		frame.SetBackdropColor = Backdrop.SetBackdropColor
+		frame.GetBackdropColor = Backdrop.GetBackdropColor
+	end
 end
 
 --- API
@@ -482,7 +530,7 @@ end
 function Backdrop:SetBackdropBorderGradientAlpha(orientation,minR,minG,minB,minA,maxR,maxG,maxB,maxA)
 	orientation = strupper(orientation)
 	if orientation == "HORIZONTAL" then
-		self._backdrop["EdgeTOPLEFTCORNER"]:SetGradientAlpa(orientation,minR,minG,minB,minA,minR,minG,minB,minA)
+		self._backdrop["EdgeTOPLEFTCORNER"]:SetGradientAlpha(orientation,minR,minG,minB,minA,minR,minG,minB,minA)
 		self._backdrop["EdgeBOTLEFTCORNER"]:SetGradientAlpha(orientation,minR,minG,minB,minA,minR,minG,minB,minA)
 		self._backdrop["EdgeLEFT"]:SetGradientAlpha(orientation,minR,minG,minB,minA,minR,minG,minB,minA)
 		self._backdrop["EdgeBOT"]:SetGradientAlpha(orientation,minR,minG,minB,minA,maxR,maxG,maxB,maxA)
@@ -531,23 +579,3 @@ function Backdrop:SetNewBackdrop(options)
 		self._backdrop.bgTexture:SetTexCoord(0,w/options.tileSize, 0,h/options.tileSize)
 	end
 end
-
---[[
-local debug = false
-
-if debug then
-	for k,v in pairs(_G) do
-		-- Reset any existing frames
-		if type(v) == "table" and v.GetObjectype and v:GetObjectType() == "Frame" then
-			local ob = v:GetBackdrop()
-			Backdrop:EhanceBackdrop(v)
-			v:SetBackdrop(ob)
-		end
-	end
-	CreateFrame = function(...)
-		local f = MakeFrame(...)
-		Backdrop:EnhanceBackdrop(f)
-		return f
-	end
-end
---]]
