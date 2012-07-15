@@ -419,6 +419,10 @@ function Backdrop:SetBackdrop(options)
 	self._backdrop_options.insets.right = options.insets.right
 	self._backdrop_options.insets.top = options.insets.top
 	self._backdrop_options.insets.bottom = options.insets.bottom
+	if not self._backdrop_options.edgeFile then
+		self._backdrop_options.edgeFile = nil
+		self._backdrop_options.tileSize = 0
+	end
 	if type(options.edgeFile) == "table" then
 		Backdrop.SetNewBackdrop(self,options)
 	else
