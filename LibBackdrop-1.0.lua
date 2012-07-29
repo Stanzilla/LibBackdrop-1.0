@@ -87,18 +87,26 @@ end
 function Backdrop:DisableEhancements(frame)
 	if frame._backdrop then
 		frame._backdrop:Hide()
+		for k,v in pairs(edgePoints) do
+			frame._backdrop["Edge"..k]:Hide()
+		end
 		frame.SetBackdrop = frame._SetBackdrop
 		frame.GetBackdrop = frame._GetBackdrop
 		frame.SetBackdropBorderColor = frame._SetBackdropBorderColor
 		frame.GetBackdropBorderColor = frame._GetBackdropBorderColor
 		frame.SetBackdropColor = frame._SetBackdropColor
 		frame.GetBackdropColor = frame._GetBackdropColor
+		frame:SetBackdrop(frame._backdrop_options)
 	end
 end
 
 function Backdrop:EnableEnhancements(frame)
 	if frame._backdrop then
+		frame:SetBackdrop(nil)
 		frame._backdrop:Show()
+		for k,v in pairs(edgePoints) do
+			frame._backdrop["Edge"..k]:Show()
+		end
 		frame.SetBackdrop = Backdrop.SetBackdrop
 		frame.GetBackdrop = Backdrop.GetBackdrop
 		frame.SetBackdropBorderColor = Backdrop.SetBackdropBorderColor
