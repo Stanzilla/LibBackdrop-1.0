@@ -1,5 +1,4 @@
-## Interface: 40300
-## X-Compatible-With: 30300
+## Interface: 50400
 ## Title: Lib: Backdrop-1.0
 ## Notes: Dropin replacement library for SetBackDrop
 ## Author: kagaro, lilsparky
