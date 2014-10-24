@@ -38,6 +38,7 @@ function Backdrop:EnhanceBackdrop(frame)
 	-- Create our enhancement frame we will use to create the backdrop
 	frame._backdrop = MakeFrame("Frame",nil,frame)
 	frame._backdrop.bgTexture = frame:CreateTexture(nil,"BACKGROUND")
+	frame._backdrop:Hide()
 	frame._backdrop.edgeTextures = {}
 	for point in pairs(edgePoints) do
 		local texture = frame:CreateTexture(nil,"BORDER")
