@@ -4,7 +4,7 @@
 	and decorate a given frame with a backdrop.
 	Credits to Lilsparky for doing the math for cutting up the quadrants
 --]]
-local MAJOR, MINOR = "LibBackdrop-1.0", 3
+local MAJOR, MINOR = "LibBackdrop-1.0", 4
 local Backdrop, oldminor = LibStub:NewLibrary(MAJOR, MINOR)
 
 if not Backdrop then return end -- No upgrade needed
@@ -34,6 +34,11 @@ local edgePoints = {
 
 function Backdrop:EnhanceBackdrop(frame)
 	if frame._backdrop then return end
+
+	-- Restore pre 9.0 backdrop functionality
+	if not frame.SetBackdrop then
+		Mixin(frame, BackdropTemplateMixin)
+	end
 
 	-- Create our enhancement frame we will use to create the backdrop
 	frame._backdrop = MakeFrame("Frame",nil,frame)
